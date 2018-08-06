@@ -23,7 +23,7 @@ Each vector's signature thus requires 8 bytes of storage in memory. To store 1M 
 
 ## Running the project on synthetic data
 
-To run the project, the first step is to build the classes with the maven compilers.
+To run the project, the first step is to build the classes with the maven compiler.
 
 ```
 mvn compile

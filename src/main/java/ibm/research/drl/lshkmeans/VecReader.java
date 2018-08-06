@@ -72,9 +72,8 @@ public class VecReader {
     int numvecs;
     int numDimensions;
     
-    final String randomSamplesFileName(int numGaussians, int numDimensions) {
-        String fileName = prop.getProperty("syntheticdata.outdir") + "/" + 
-                "data." + numGaussians + "." + numDimensions + ".txt";
+    public final String randomSamplesFileName() {
+        String fileName = prop.getProperty("datafile");
         return fileName;
     }
     
@@ -82,10 +81,8 @@ public class VecReader {
         prop = new Properties();
         prop.load(new FileReader(propFile));         
         
-        int numGaussians = Integer.parseInt(prop.getProperty("syntheticdata.numgaussians"));
         numDimensions = Integer.parseInt(prop.getProperty("vec.numdimensions"));
-        
-        inFile = randomSamplesFileName(numGaussians, numDimensions);
+        inFile = randomSamplesFileName();
         
         FileReader fr = new FileReader(inFile);
         BufferedReader br = new BufferedReader(fr);
