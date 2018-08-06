@@ -23,7 +23,13 @@ Each vector's signature thus requires 8 bytes of storage in memory. To store 1M 
 
 ## Running the project on synthetic data
 
-To run the project, simply type from your command-line.
+To run the project, the first step is to build the classes with the maven compilers.
+
+```
+mvn compile
+```
+
+Then execute the following steps.
 ```
 sh scripts/sbkmeans_synthetic.sh <num-data-points> <dimension> <num-ref-classes> <value of K for K-means>
 ```
