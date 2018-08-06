@@ -36,7 +36,7 @@ sh scripts/sbkmeans_synthetic.sh <num-data-points> <dimension> <num-ref-classes>
 
 For example, a sample invocation is
 ```
-sh scripts/sbkmeans_synthetic.sh 100000 100 10 10
+sh scripts/sbkmeans_synthetic.sh 100000 100 10 10 true
 ```
 
 The last parameter, namely **estimate signatures of centroids**, when set to **true** means that we estimate the signature
