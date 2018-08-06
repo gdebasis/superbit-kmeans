@@ -7,7 +7,7 @@ Specifically speaking, the program executes the following steps.
 
 1. Reads the vectors from a text file; each line of the input file represents a vector (values are space separated).
 Each line could be optionally followed by a reference class (an integer value) separted by a tab.
-An example input file of 100 dimensional vectors (ref classes number 0 and 1) is as follows.
+An example input file of 5 dimensional vectors (ref classes number 0 and 1) is as follows.
 
 ```
 -2.0163 -3.1664 -4.0982 -4.3897 1.0958	0 
