@@ -31,11 +31,17 @@ mvn compile
 
 Then execute the following steps.
 ```
-sh scripts/sbkmeans_synthetic.sh <num-data-points> <dimension> <num-ref-classes> <value of K for K-means>
+sh scripts/sbkmeans_synthetic.sh <num-data-points> <dimension> <num-ref-classes> <value of K for K-means> <estimate signatures of centroids (true/false)>
 ```
 
 For example, a sample invocation is
 ```
 sh scripts/sbkmeans_synthetic.sh 100000 100 10 10
 ```
+
+The last parameter, namely **estimate signatures of centroids**, when set to **true** means that we estimate the signature
+of the centroid vector of a set of points (as per the current partition) instead of making disk access to compute the true
+centroids (and then computing the signature of the true centroid). If this flag is set to **true**, the program thus makes only
+one disk access to load the vectors as opposed to accessing the disk to read the vectors during every centroid recomputation
+phase of K-means. 
 
