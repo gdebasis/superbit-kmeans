@@ -22,6 +22,7 @@ public class SBKMeansClusterer {
     SBVec[] centroids;
     int numVecs;
     VecReader vecReader;
+    boolean estimateSumSigantures;
     
     public SBKMeansClusterer(String propFile) throws Exception {
         this.propFile = propFile;
@@ -30,6 +31,7 @@ public class SBKMeansClusterer {
         k = Integer.parseInt(prop.getProperty("kmeans.numclusters"));
         iters = Integer.parseInt(prop.getProperty("kmeans.iterations", "10"));
         centroids = new SBVec[k];
+        estimateSumSigantures = Boolean.parseBoolean(prop.getProperty("estimate.sum.signatures", "false"));
     }
     
     void loadVecs() throws Exception {
@@ -50,10 +52,28 @@ public class SBKMeansClusterer {
             buildPartition();
             
             System.out.println("Recomputing centroids (involves disk access to read data)...");
-            centroids = vecReader.recomputeSignaturesOfCentroids(sbvecs, centroids);
+            recomputeCentroids();
         }
         
         writeOutput();
+    }
+    
+    void recomputeCentroids() throws Exception {
+        if (!estimateSumSigantures) {
+            centroids = vecReader.recomputeSignaturesOfCentroids(sbvecs, centroids);
+            return;
+        }
+        
+        SBVec[] newcentroids = new SBVec[k];
+        
+        for (int i=0; i < sbvecs.length; i++) {
+            if (newcentroids[sbvecs[i].clusterId] == null) {
+                newcentroids[sbvecs[i].clusterId] = sbvecs[i]; 
+            }
+            else {
+                newcentroids[sbvecs[i].clusterId].vecsum(sbvecs[i]);
+            }
+        }
     }
     
     void buildPartition() {

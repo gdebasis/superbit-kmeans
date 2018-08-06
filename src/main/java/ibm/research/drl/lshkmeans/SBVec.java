@@ -36,6 +36,10 @@ public class SBVec {
         encodeSignature(bits);
     }
     
+    public SBVec(long signature) {
+        this.signature = signature;
+    }
+    
     final void encodeSignature(boolean[] bits) {
         long mask;
         
@@ -60,6 +64,40 @@ public class SBVec {
         }
         
         return (float)Math.cos((1 - sum/(float)SIGNATURE_CODELEN) * Math.PI);
+    }
+    
+    // Estimate the signature of the vector sum of a and b.
+    // Note that we don't know the true vectors. We only know
+    // their signatures. If the bits match -- we copy the same bit into
+    // the estimated sum signature.
+    // If they don't (e.g. 01 or 10) then we flip a coin to determine
+    // the outcome.    
+    void vecsum(SBVec b) {
+        long aSignature = this.signature;
+        long bSignature = b.signature;
+        long cSignature = 0;
+        long sameBit;
+        long value;
+        float x;
+        
+        for (int i=0; i < SIGNATURE_CODELEN; i++) {
+            sameBit = (aSignature&1l) ^ (bSignature&1l);
+            if (sameBit == 0) {
+                value = (aSignature&1l);
+            }
+            else {
+                x = (float)Math.random();
+                value = x < 0.5f? 0 : 1;
+            }
+            
+            if (value == 1)
+                cSignature = cSignature | (value<<i);
+            
+            aSignature = aSignature>>1;
+            bSignature = bSignature>>1;
+        }
+        
+        this.signature = cSignature;
     }
     
     public static void main(String[] args) {

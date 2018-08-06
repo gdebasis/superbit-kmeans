@@ -1,8 +1,8 @@
 #!/bin/bash
 
-if [ $# -lt 4 ]
+if [ $# -lt 5 ]
 then
-	echo "Usage: $0 <num vecs> <num dimensions> <num ref classes> <num predicted classes (K)>"
+	echo "Usage: $0 <num vecs> <num dimensions> <num ref classes> <num predicted classes (K)> <estimate signatures of centroids (true/false)>"
 	exit
 fi
 
@@ -27,6 +27,7 @@ syntheticdata.outdir=./
 kmeans.numclusters=$K
 kmeans.iterations=$ITERS_KMEANS
 kmeans.outfile=$OUTFILE
+estimate.sum.signatures=$5
 EOF1
 
 if [ ! -e $DATAFILE ]
@@ -44,5 +45,5 @@ paste $OUTFILE tmp1 > tmp2
 echo "Evaluating o/p..."
 mvn exec:java -Dexec.mainClass="ibm.research.drl.lshkmeans.ClustEval" -Dexec.args="tmp2"
 
-#rm tmp*
+rm tmp*
 

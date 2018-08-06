@@ -49,18 +49,6 @@ class RefLabelFreqs {
         refLabels.put(refClassLabel, rlf);
     }
 
-    RefLabelFreq getMax() {
-        if (sortedList != null) {
-            return sortedList.get(0);
-        }
-
-        sortedList = new ArrayList<>();
-        for (RefLabelFreq rf : refLabels.values()) {
-            sortedList.add(rf);
-        }
-        Collections.sort(sortedList);
-        return sortedList.get(0);
-    }
 }
 
 class ClustEval {
