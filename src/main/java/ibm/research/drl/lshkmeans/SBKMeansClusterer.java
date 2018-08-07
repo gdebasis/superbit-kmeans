@@ -51,7 +51,6 @@ public class SBKMeansClusterer {
             System.out.println("Iteration " + i + " of K-means...");
             buildPartition();
             
-            System.out.println("Recomputing centroids (involves disk access to read data)...");
             recomputeCentroids();
         }
         
@@ -63,7 +62,9 @@ public class SBKMeansClusterer {
             centroids = vecReader.recomputeSignaturesOfCentroids(sbvecs, centroids);
             return;
         }
-        
+            
+				System.out.println("Doing in-mem recomputations (estimated with signatures)...");
+
         SBVec[] newcentroids = new SBVec[k];
         
         for (int i=0; i < sbvecs.length; i++) {
@@ -74,6 +75,7 @@ public class SBKMeansClusterer {
                 newcentroids[sbvecs[i].clusterId].vecsum(sbvecs[i]);
             }
         }
+        this.centroids = newcentroids;
     }
     
     void buildPartition() {

@@ -107,6 +107,7 @@ public class VecReader {
         FileReader fr = new FileReader(inFile);
         BufferedReader br = new BufferedReader(fr);
         
+        System.out.println("Recomputing centroids (involves disk access to read data)...");
         int k = centroids.length;
         
         SBVec[] newcentroidSignatures = new SBVec[k];
