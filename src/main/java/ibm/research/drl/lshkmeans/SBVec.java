@@ -40,6 +40,11 @@ public class SBVec {
         this.signature = signature;
     }
     
+    public SBVec(SBVec that) { // copy constructor
+        this.signature = that.signature;
+        this.clusterId = that.clusterId;
+    }
+    
     final void encodeSignature(boolean[] bits) {
         long mask;
         
@@ -49,7 +54,7 @@ public class SBVec {
         }
     }
     
-    float computeSim(SBVec that) {
+    float computeCosSim(SBVec that) {
         long thisSignature = this.signature;
         long thatSignature = that.signature;
         byte sum = 0;
@@ -64,6 +69,19 @@ public class SBVec {
         }
         
         return (float)Math.cos((1 - sum/(float)SIGNATURE_CODELEN) * Math.PI);
+    }
+
+    int computeHammingSim(SBVec that) {        
+        int numBitsNotMatching = Long.bitCount(this.signature ^ that.signature); // Hamming distance
+        int numBitsMatching = SIGNATURE_CODELEN - numBitsNotMatching;
+        return numBitsMatching;
+    }
+    
+    float computeCosSimFast(SBVec that) {        
+        int numBitsNotMatching = Long.bitCount(this.signature ^ that.signature); // Hamming distance
+        int numBitsMatching = SIGNATURE_CODELEN - numBitsNotMatching;
+        
+        return (float)Math.cos((1 - numBitsMatching/(float)SIGNATURE_CODELEN) * Math.PI);
     }
     
     // Estimate the signature of the vector sum of a and b.
@@ -124,7 +142,8 @@ public class SBVec {
             for (int k = j+1; k < count; k++) {        
                 SBVec b = vecs.get(k);
                 
-                System.out.format("Sim (%d, %d) = %4f\n", j, k, a.computeSim(b));
+                System.out.format("Sim (%d, %d) = %4f\n", j, k, a.computeCosSim(b));
+                System.out.format("Sim (%d, %d) = %4f\n", j, k, a.computeCosSimFast(b));
             }
         }
     }

@@ -39,6 +39,8 @@ fi
 echo "K-means clustering..."
 mvn exec:java -Dexec.mainClass="ibm.research.drl.lshkmeans.SBKMeansClusterer" -Dexec.args="$PROPFILE"
 
+#exit
+
 cat $DATAFILE | awk '{print $NF}' > tmp1
 paste $OUTFILE tmp1 > tmp2
 

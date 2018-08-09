@@ -63,31 +63,35 @@ public class SBKMeansClusterer {
             return;
         }
             
-				System.out.println("Doing in-mem recomputations (estimated with signatures)...");
+        System.out.println("Performing in-mem recomputations (estimated with signatures)...");
 
         SBVec[] newcentroids = new SBVec[k];
         
         for (int i=0; i < sbvecs.length; i++) {
             if (newcentroids[sbvecs[i].clusterId] == null) {
-                newcentroids[sbvecs[i].clusterId] = sbvecs[i]; 
+                newcentroids[sbvecs[i].clusterId] = sbvecs[i]; // first vector in this partition 
             }
             else {
-                newcentroids[sbvecs[i].clusterId].vecsum(sbvecs[i]);
+                newcentroids[sbvecs[i].clusterId].vecsum(sbvecs[i]); // subsequent times -- do vector sum
             }
         }
+        
         this.centroids = newcentroids;
     }
     
     void buildPartition() {
-        float sim, maxsim;
+        int sim, maxsim;
         int clusterToAssign;
-        
+
         for (int i=0; i < numVecs; i++) {
             maxsim = 0;
             clusterToAssign = 0;
             
             for (int j=0; j < k; j++) {
-                sim = sbvecs[i].computeSim(centroids[j]);
+                if (centroids[j]==null)
+                    continue;
+                
+                sim = sbvecs[i].computeHammingSim(centroids[j]);
                 if (sim > maxsim) {
                     maxsim = sim;
                     clusterToAssign = j;
@@ -99,9 +103,17 @@ public class SBKMeansClusterer {
     
     void initCentroids() {
         int randomId;
+        SBVec tmp;
+        
         for (int i=0; i < k; i++) {
-            randomId = (int)(Math.random() * numVecs);
+            randomId = (int)(Math.random() * (numVecs-i));
+            
             centroids[i] = sbvecs[randomId];
+            
+            // swap the selected point with the last one -- no duplicate selection
+            tmp = new SBVec(sbvecs[randomId]);
+            sbvecs[randomId] = new SBVec(sbvecs[numVecs-1-i]);
+            sbvecs[numVecs-1-i] = tmp;
         }
     }
     
