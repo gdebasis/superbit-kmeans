@@ -1,8 +1,8 @@
 #!/bin/bash
 
-if [ $# -lt 5 ]
+if [ $# -lt 6 ]
 then
-	echo "Usage: $0 <num vecs> <num dimensions> <num ref classes> <num predicted classes (K)> <estimate signatures of centroids (true/false)>"
+	echo "Usage: $0 <num vecs> <num dimensions> <num ref classes> <num predicted classes (K)> <estimate signatures of centroids (true/false)> <use projections (true/false)>"
 	exit
 fi
 
@@ -28,6 +28,8 @@ kmeans.numclusters=$K
 kmeans.iterations=$ITERS_KMEANS
 kmeans.outfile=$OUTFILE
 estimate.sum.signatures=$5
+average.centroid.estimation=$6
+
 EOF1
 
 if [ ! -e $DATAFILE ]

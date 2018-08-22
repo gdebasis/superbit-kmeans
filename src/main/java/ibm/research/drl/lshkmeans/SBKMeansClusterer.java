@@ -23,6 +23,7 @@ public class SBKMeansClusterer {
     int numVecs;
     VecReader vecReader;
     boolean estimateSumSigantures;
+    boolean withProjections;
     
     public SBKMeansClusterer(String propFile) throws Exception {
         this.propFile = propFile;
@@ -31,7 +32,9 @@ public class SBKMeansClusterer {
         k = Integer.parseInt(prop.getProperty("kmeans.numclusters"));
         iters = Integer.parseInt(prop.getProperty("kmeans.iterations", "10"));
         centroids = new SBVec[k];
+        
         estimateSumSigantures = Boolean.parseBoolean(prop.getProperty("estimate.sum.signatures", "false"));
+        withProjections = Boolean.parseBoolean(prop.getProperty("average.centroid.estimation", "false"));
     }
     
     void loadVecs() throws Exception {
@@ -57,14 +60,7 @@ public class SBKMeansClusterer {
         writeOutput();
     }
     
-    void recomputeCentroids() throws Exception {
-        if (!estimateSumSigantures) {
-            centroids = vecReader.recomputeSignaturesOfCentroids(sbvecs, centroids);
-            return;
-        }
-            
-        System.out.println("Performing in-mem recomputations (estimated with signatures)...");
-
+    SBVec[] estimateNewCentroids() {
         SBVec[] newcentroids = new SBVec[k];
         
         for (int i=0; i < sbvecs.length; i++) {
@@ -75,7 +71,20 @@ public class SBKMeansClusterer {
                 newcentroids[sbvecs[i].clusterId].vecsum(sbvecs[i]); // subsequent times -- do vector sum
             }
         }
-        
+        return newcentroids;
+    }
+            
+            
+            
+    void recomputeCentroids() throws Exception {
+        if (!estimateSumSigantures) {
+            centroids = vecReader.recomputeSignaturesOfCentroids(sbvecs, centroids);
+            return;
+        }
+            
+        System.out.println("Performing in-mem recomputations (estimated with signatures)...");
+
+        SBVec[] newcentroids = estimateNewCentroids();        
         this.centroids = newcentroids;
     }
     
@@ -101,19 +110,31 @@ public class SBKMeansClusterer {
         }
     }
     
+    SBVec createSBVecObj() {
+        SBVec sbvec = !withProjections? new SBVec(0) : new SBVecProjStats(0);
+        return sbvec;
+    }
+    
+    void copyTo(SBVec dest, SBVec src) {
+        dest.signature = src.signature;
+        dest.clusterId = src.clusterId;
+        if (withProjections)
+            ((SBVecProjStats)dest).avgProjSignature = ((SBVecProjStats)src).avgProjSignature;
+    }
+    
     void initCentroids() {
         int randomId;
-        SBVec tmp;
+        SBVec tmp = createSBVecObj();
         
         for (int i=0; i < k; i++) {
             randomId = (int)(Math.random() * (numVecs-i));
             
-            centroids[i] = sbvecs[randomId];
-            
             // swap the selected point with the last one -- no duplicate selection
-            tmp = new SBVec(sbvecs[randomId]);
-            sbvecs[randomId] = new SBVec(sbvecs[numVecs-1-i]);
-            sbvecs[numVecs-1-i] = tmp;
+            copyTo(tmp, sbvecs[randomId]);
+            copyTo(sbvecs[randomId], sbvecs[numVecs-1-i]);
+            copyTo(sbvecs[numVecs-1-i], tmp);
+            
+            centroids[i] = sbvecs[numVecs-1-i];
         }
     }
     

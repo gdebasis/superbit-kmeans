@@ -12,11 +12,11 @@
     </properties>
     
     <dependencies>
-    <dependency>
+    <!--dependency>
         <groupId>info.debatty</groupId>
         <artifactId>java-lsh</artifactId>
         <version>RELEASE</version>
-    </dependency>    
+    </dependency-->    
     
     <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-math3 -->
     <dependency>

@@ -31,17 +31,21 @@ mvn compile
 
 Then execute the following steps.
 ```
-sh scripts/sbkmeans_synthetic.sh <num-data-points> <dimension> <num-ref-classes> <value of K for K-means> <estimate signatures of centroids (true/false)>
+sh scripts/sbkmeans_synthetic.sh <num-data-points> <dimension> <num-ref-classes> <value of K for K-means> <estimate signatures of centroids (true/false) <use projections> (true/false)
 ```
 
 For example, a sample invocation is
 ```
-sh scripts/sbkmeans_synthetic.sh 100000 100 10 10 true
+sh scripts/sbkmeans_synthetic.sh 100000 100 10 10 true true
 ```
 
-The last parameter, namely **estimate signatures of centroids**, when set to **true** means that we estimate the signature
+The second-last parameter, namely **estimate signatures of centroids**, when set to **true** means that we estimate the signature
 of the centroid vector of a set of points (as per the current partition) instead of making disk access to compute the true
 centroids (and then computing the signature of the true centroid). If this flag is set to **true**, the program thus makes only
 one disk access to load the vectors as opposed to accessing the disk to read the vectors during every centroid recomputation
 phase of K-means. 
+
+The very last parameter, namely **use projections**, when set to **true** stores average projected values of the data vectors along each orthogonal basis
+so as to better estimate the likelihoods of the signatures of the vector sums for each partition during the K-means iterations. In addition to the indicator
+variables for the sum signatures, this method also stores indicator variables (of 64 bits) to indicate whether the projected values are higher than the average. 
 
