@@ -68,7 +68,7 @@ class Vec {
 public class VecReader {
     Properties prop;
     String inFile;
-    SBVec[] vecs;  // each object requires 8 bytes of memory
+    List<SBVec> vecs;  // each object requires 8 bytes of memory
     int numvecs;
     int numDimensions;
     
@@ -81,20 +81,12 @@ public class VecReader {
         prop = new Properties();
         prop.load(new FileReader(propFile));         
         
+        vecs = new ArrayList<>();
         numDimensions = Integer.parseInt(prop.getProperty("vec.numdimensions"));
-        inFile = randomSamplesFileName();
         
+        inFile = randomSamplesFileName();        
         FileReader fr = new FileReader(inFile);
         BufferedReader br = new BufferedReader(fr);
-        
-        numvecs = getNumVecs(br);
-        vecs = new SBVec[numvecs];
-        
-        br.close();
-        fr.close();
-        
-        fr = new FileReader(inFile);
-        br = new BufferedReader(fr);
         
         loadVecs(br);
         
@@ -147,9 +139,9 @@ public class VecReader {
         boolean withProjections = Boolean.parseBoolean(prop.getProperty("average.centroid.estimation", "false"));
         
         String line;
+        SBVec thisVec;
         boolean init = false;
-        int vec_index = 0;
-        Vec[] projections = new Vec[numvecs];
+        List<Vec> projections = new ArrayList<>();
         
         while ((line = br.readLine()) != null) {
             Vec v = new Vec(line);
@@ -159,14 +151,15 @@ public class VecReader {
             }
             
             if (withProjections) {
-                vecs[vec_index] = new SBVecProjStats(v);
-                projections[vec_index] = new Vec(0, ((SBVecProjStats)vecs[vec_index]).getProjections(v));
+                thisVec = new SBVecProjStats(v);
+                vecs.add(thisVec);
+                projections.add(new Vec(0, ((SBVecProjStats)thisVec).getProjections(v)));
             }
             else {
-                vecs[vec_index] = new SBVec(v);
+                thisVec = new SBVec(v);
+                vecs.add(thisVec);
             }
             
-            vec_index++;
         }
         
         if (withProjections) {
@@ -175,12 +168,7 @@ public class VecReader {
             SBVec.normalizeProjections();
             
             for (int i=0; i < numvecs; i++) {
-                ((SBVecProjStats)vecs[i]).encodeProjections(projections[i]);
-                
-                /*
-                System.out.println(String.format("signature[%d] = %x, proj-signature[%d] = %x",
-                            i, vecs[i].signature, i, ((SBVecProjStats)vecs[i]).avgProjSignature));
-                */
+                ((SBVecProjStats)vecs.get(i)).encodeProjections(projections.get(i));
             }
         }
     }
@@ -191,5 +179,8 @@ public class VecReader {
         return numLines;
     }
     
-    SBVec[] getSBVecs() { return vecs; }
+    SBVec[] getSBVecs() {
+        SBVec[] vecArray = new SBVec[numvecs];
+        return vecs.toArray(vecArray);
+    }
 }
