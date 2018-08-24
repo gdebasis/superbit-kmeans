@@ -120,11 +120,8 @@ class ClustEval {
         float fscore = 2 * prec * recall / (float) (prec + recall);
         float jac = tp / (float) (fp + fn + tp);
 
-        System.out.println("Jaccard: " + jac);
-        System.out.println("F-score: " + fscore);
-        System.out.println("RI: " + acc);
-        System.out.println("Recall: "+ recall);
-        System.out.println("Precision: "+ prec);
+        System.out.println("Jaccard\tF-score\tRI\tRecall\tPrecision");
+        System.out.println(jac + "\t" + fscore + "\t" + acc + "\t" + recall + "\t" + prec);        
     }
 }
 

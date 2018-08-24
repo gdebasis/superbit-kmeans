@@ -44,6 +44,8 @@ public class SBKMeansClusterer {
     }
     
     void kmeans() throws Exception {
+        long start = System.currentTimeMillis();
+        
         System.out.println("Loading data points");
         loadVecs();
         
@@ -56,6 +58,9 @@ public class SBKMeansClusterer {
             
             recomputeCentroids();
         }
+        
+        long end = System.currentTimeMillis();
+        System.out.println(String.format("Time to cluster = %.4f (secs)", (end-start)/(float)1000f));
         
         writeOutput();
     }
