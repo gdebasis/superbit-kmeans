@@ -69,7 +69,6 @@ public class VecReader {
     Properties prop;
     String inFile;
     List<SBVec> vecs;  // each object requires 8 bytes of memory
-    int numvecs;
     int numDimensions;
     
     public final String randomSamplesFileName() {
@@ -166,6 +165,7 @@ public class VecReader {
             // Construct the 64 bit signature vectors based on average values
             // of the projections.
             SBVec.normalizeProjections();
+            int numvecs = vecs.size();
             
             for (int i=0; i < numvecs; i++) {
                 ((SBVecProjStats)vecs.get(i)).encodeProjections(projections.get(i));
@@ -180,7 +180,8 @@ public class VecReader {
     }
     
     SBVec[] getSBVecs() {
-        SBVec[] vecArray = new SBVec[numvecs];
+        
+        SBVec[] vecArray = new SBVec[vecs.size()];
         return vecs.toArray(vecArray);
     }
 }
