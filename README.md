@@ -47,5 +47,7 @@ phase of K-means.
 
 The very last parameter, namely **use projections**, when set to **true** stores average projected values of the data vectors along each orthogonal basis
 so as to better estimate the likelihoods of the signatures of the vector sums for each partition during the K-means iterations. In addition to the indicator
-variables for the sum signatures, this method also stores indicator variables (of 64 bits) to indicate whether the projected values are higher than the average. 
+variables for the sum signatures, this method also stores indicator variables (of 64 bits) to indicate whether the projected values are higher than the average.
+
+For more details, read our CIKM'19 [paper](https://github.com/gdebasis/superbit-kmeans/blob/master/article/Hamming_Space_Kmeans.pdf).
 
